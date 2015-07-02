@@ -6,7 +6,7 @@ motivation, goal
 
 The code is available on [github](https://github.com/Barbichu/ssrHoTT/).
 
-Let us define a new type for natural integers in Type. We work in the subdirectory *theories*, as is often the case.
+Let us define a new type for natural integers in Type. We work in the subdirectory *theories*, as is often the case in Coq projects.
 
 <!-- Coq code -->
     Inductive Nat : Type := O : Nat | S : Nat -> Nat.
@@ -81,7 +81,7 @@ Now we want to write a function *nat_of_int* which will build terms as it goes f
 	    user_err_loc (dloc, "nat_of_int",
 		str "Cannot interpret a negative number as a number of type nat")
 		
-The code is quite self-explanatory once we get past some heavy notations: we first test whether n is nonnegative (in the opposite case we throw an error as we are trying to parse negative numbers). Then we build a recursive function which will add the "S" constructor as long as its argument is greater than 0, and return its value otherwise.
+The code is quite self-explanatory once we get past some heavy notations: we first test whether n is nonnegative (in the opposite case we throw an error as we are trying to parse negative numbers). Then we build a recursive function which will add the "S" constructor as long as its argument is greater than 0, substracting one to the argument each time that is the case, and return its value otherwise.
 
 
 We also need a printing function so that when we print the result of some computation involving numbers of type Nat, we can get it back as a usual numeral, thus
