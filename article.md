@@ -1,15 +1,50 @@
 # Writing a parser for a type isomorphic to Nat
 
 <intro>
-motivation, goal
+We would like to implement a Coq plugin in order to be able to parse (pretty-printed) natural numbers and interpret them as elements of a customized inductive type defined by the user outside of the Coq sources.
+
+The solution comes down to adapting Ocaml files from <plugins/syntax/\*_syntax.ml>. There are two main difficulties here:
+- finding the right way to reference our custom type inside the Ocaml code;
+- making the plugin usable not only by the end user, but also by the developer **inside** the working directory.
+We will illustrate how to use the _CoqProject configuration file to set up both compilation options and IDEs. The developer configuration moreover uses a clever hack of the namespace.
+
 <end intro>
+
+<explanation of the second issue, to be moved at an appropriate location>
+
+	Inductive Nat : Type := O : Nat | S : Nat -> Nat.
+
+	Declare ML Module "ssrhott_nat_syntax_plugin".
+
+and in ssrhott\_nat\_syntax\_plugin.ml:
+
+	let nat_definitions = make_dir ["SsrHoTT";"nat"]
+
+so our Ocaml plugin relies on a definition which comes from the nat.v file which itself relies on our Ocaml plugin for parsing. This is of course resolved through a dynamic import, that is, the ml file only specifies under which **name** the definition should be found, here SsrHoTT.nat.Nat, and we try to parse or print a Nat, the module invokes the constructs by their name.
+
+Now, this is all good if we want to use this plugin from an external Coq file myfile.v which could begin with
+
+	Require Import SsrHoTT.
+
+But what if we want to parse nats **inside** the file nat.v which defines it, if only while developing the plugin? Then the module can certainly not access our type Nat as SsrHoTT.nat.Nat, since it was just defined at toplevel as Top.Nat!
+Thus we need a to hack a little here, by "renaming" Top as SsrHoTT.nat in order for the module to work. In Proof General with Emacs, we do this by adding at the top of nat.v the following comment:
+
+	(* -*- coq-prog-args: ("-emacs" "-top" "SsrHoTT.nat") -*- *)
+
+
+
+< end explanation of the second issue >
+
+
 
 The code is available on [github](https://github.com/Barbichu/ssrHoTT/).
 
-Let us define a new type for natural integers in Type. We work in the subdirectory *theories*, as is often the case in Coq projects.
+Let us define a new type for natural numbers in Type. We work in the subdirectory *theories*, as is often the case in Coq projects.
 
 <!-- Coq code -->
+
     Inductive Nat : Type := O : Nat | S : Nat -> Nat.
+
 <!-- End Coq code -->
 
 We would like to be able to parse integers directly from a Coq script as Nats, for example
