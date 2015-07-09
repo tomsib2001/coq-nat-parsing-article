@@ -129,8 +129,6 @@ will answer
 
 This printing function is defined by
 
-	exception Non_closed_number
-
 	let rec int_of_nat = function
       | GApp (_,GRef (_,s,_),[a]) when Globnames.eq_gr s glob_S ->
     add_1 (int_of_nat a)
@@ -152,9 +150,4 @@ Now the last step is to declare our new combination of parser and printer to Coq
        ([GRef (Loc.ghost,glob_S,None);
          GRef (Loc.ghost,glob_O,None)], uninterp_nat, true)
 
-
-(for later)
-<!-- Coq code -->
-Declare ML Module "ssrhott_nat_syntax_plugin".
-<!-- End Coq code -->
-
+(the function declare\_numeral\_interpreter is a Coq built-in way of declaring a parser/printer pair for numerals in Coq)
