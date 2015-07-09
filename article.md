@@ -115,7 +115,7 @@ Now we want to write a function *nat_of_int* which will build terms as it goes f
       else
 	    user_err_loc (dloc, "nat_of_int",
 		str "Cannot interpret a negative number as a number of type nat")
-		
+
 The code is quite self-explanatory once we get past some heavy notations: we first test whether n is nonnegative (in the opposite case we throw an error as we are trying to parse negative numbers). Then we build a recursive function which will add the "S" constructor as long as its argument is greater than 0, substracting one to the argument each time that is the case, and return its value otherwise.
 
 
